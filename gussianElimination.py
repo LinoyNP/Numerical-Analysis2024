@@ -7,7 +7,7 @@ Name:
 
 import numpy as np
 from numpy.linalg import norm, inv
-from inverse_matrix.matrix_utility import row_addition_elementary_matrix, scalar_multiplication_elementary_matrix,partial_pivoting,swap_rows_elementary_matrix,matrix_multiply,print_matrix
+from inverse_matrix.matrix_utility import row_addition_elementary_matrix, backward_substitution,partial_pivoting,swap_rows_elementary_matrix,matrix_multiply,print_matrix,swap_row
 from condition_of_linear_equations import  norm
 from colors import bcolors
 
@@ -23,9 +23,9 @@ from colors import bcolors
 
 """
 def gaussianElimination(mat):
-    if np.linalg.det(mat)==0:
+    """if np.linalg.det(mat)==0:
         print("The matrix is singular")
-        return
+        return"""
     N = len(mat)
 
     singular_flag = forward_substitution(mat)
@@ -48,13 +48,7 @@ def gaussianElimination(mat):
 *) הפונקציה מקבלת את המטריצה (mat) ואת שני האינדקסים של השורות שיש להחליף (i וְ-j).
 
 """
-# function for elementary operation of swapping two rows
-def swap_row(mat, i, j):
-    N = len(mat)
-    for k in range(N + 1):
-        temp = mat[i][k]
-        mat[i][k] = mat[j][k]
-        mat[j][k] = temp
+
 
 
 """
@@ -78,15 +72,16 @@ def forward_substitution(mat):
         if isinstance(result1, str):  # Check if partial pivoting returns an error message
             print(result1)
             return k  # Matrix is singular
-
+        print("Matrix after pivoting: ", result1)
         A = result1  # Update A with the result of partial pivoting
 
         for i in range(k + 1, N):
           m = -A[i][k] / A[k][k] #the multiple
           B=row_addition_elementary_matrix(N, i, k,  m)
-          C=matrix_multiply(B, A)
+          C=np.dot(B, A)
+          #C=matrix_multiply(B, A)
 
-          print('Elementary matrix:')
+          """print('Elementary matrix:')
           print_matrix(B)
           print('*')
           print('Original matrix:')
@@ -94,71 +89,18 @@ def forward_substitution(mat):
           print('=')
           print('Result matrix:')
           print_matrix(C)
-          print("------------------------------------------------------------------")
+          print("------------------------------------------------------------------")"""
 
           A = C
     mat[:] = A.tolist()  # Update the original matrix with the modified one
     return -1
 
-
-
-
-"""
-def forward_substitution(mat):
-    
-    N = len(mat)
-    for k in range(N):
-
-        # Partial Pivoting: Find the pivot row with the largest absolute value in the current column
-        # Pivoting חלקי: מצא את השורה הפיבוטית עם הערך המרבי בעמודה הנוכחית
-
-        pivot_row = k
-        v_max = mat[pivot_row][k]
-        for i in range(k + 1, N):
-            if abs(mat[i][k]) > v_max:
-                v_max = mat[i][k]
-                pivot_row = i
-
-        # if a principal diagonal element is zero,it denotes that matrix is singular,
-        # and will lead to a division-by-zero later.
-        # אם אחד מהאיברים הראשיים באלכסון הוא אפס, זה מציין שהמטריצה היא סינגולרית,
-        # ויביא לחלוקה באפס מאוחר יותר.
-
-        if not mat[k][pivot_row]:# mat[k][pivot_row]==0
-            return k  # Matrix is singular
-
-        # Swap the current row with the pivot row
-        if pivot_row != k:
-            swap_row(mat, k, pivot_row)
-        # End Partial Pivoting
-
-        for i in range(k + 1, N):
-
-
-            #  Compute the multiplier
-            #  חישוב "הכופל" 'm'
-            m = mat[i][k] / mat[k][k]
-
-            # subtract fth multiple of corresponding kth row element
-            # החסר מכפלה שלישית מהאיבר התואם בשורה ה-k
-
-            for j in range(k + 1, N + 1):
-            #for j in range(k , N + 1):
-                mat[i][j] -= mat[k][j] * m
-
-            # filling lower triangular matrix with zeros
-            # מילוי של מטריצה תלת-משולבת עם אפסים
-
-            mat[i][k] = 0
-
-    return -1
-"""
 """
 *) פונקציה זו מבצעת תת-הקמה לאחור (Backward Substitution) במערך משוואות לינאריות, לאחר שהמטריצה כבר עברה תת-הקמה קדימה.
 *) כלומר הפונקציה מקבלת את המטריצה (mat) ומחשבת את ערכי המשתנים (unknowns) באמצעות חישובים אחוריים.
 *) מתחילה משורה האחרונה ועוברת על המשוואות לאחור, מחשבת את ערכי המשתנים, ומכניסה אותם למערך הפתרונות X.
 
-"""
+
 # function to calculate the values of the unknowns
 def backward_substitution(mat):
     N = len(mat)
@@ -181,7 +123,7 @@ def backward_substitution(mat):
 
     return x
 
-"""
+
 *) הבלוק if __name__ == '__main__': הוא ריצת התוכנית הראשית.
 *) הוא מגדיר מטריצה של מערכת משוואות  (A_b)- זוהי מטריצת המקדמים(A) עם ווקטור התוצאה (b)  .
 *) זה קורא gaussianElimination(A_b) כדי לפתור את מערכת המשוואות הלינאריות.
@@ -191,7 +133,7 @@ def backward_substitution(mat):
 """
 
 
-if __name__ == '__main__':
+"""if __name__ == '__main__':
 
     print('''   Date:19/02/2024
     Group: Chaya Mizrachi ID: 214102584, Yael Siman-Tov ID:325181295, Linoy Nisim Pur ID: 324029685
@@ -220,4 +162,4 @@ if __name__ == '__main__':
         num=norm(A)+1
 
 
-        print("the norm of the matrix A plus 1 is :", num)
+        print("the norm of the matrix A plus 1 is :", num)"""
