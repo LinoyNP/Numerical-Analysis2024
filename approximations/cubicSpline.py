@@ -1,5 +1,9 @@
 import numpy as np
 import math as m
+from Iterative_methods_matrix.Jacobi import jacobi_iterative
+from sympy import *
+
+x = Symbol('x')
 
 def cubicSpline(table_points, point, y1_derivative, y2_derivative):
     table_size = len(table_points)
@@ -56,12 +60,34 @@ def cubicSpline(table_points, point, y1_derivative, y2_derivative):
     M = (jacobi_iterative(matrix, d, result))
     print("\nvector M: " + str(list(map(float, M))))
 
+    # find si(x)
+    S = 0
+    for i in range(table_size-1):
+        S = table_points[i+1][1]*(x - table_points[i][0])/h[i] - table_points[i][1] * (x - table_points[i+1][0])/h[i]
+        S += M[i+1]/6 * (((x - table_points[i][0])**3)/h[i] - (h[i] * (x -table_points[i][0])))
+        S -= M[i]/6 * (((x - table_points[i+1][0])**3)/h[i] - (h[i] * (x -table_points[i+1][0])))
+
+    # find the location of x0:
+    loc = 0
+    for i in range(1, len(f)):
+        if x0 < f[i][0] and x0 > f[i - 1][0]:
+            loc = i
+            break
+
+    if loc == 0:
+        print("no range found for x0")
+        return
+
+    S = 0
+    S = f[loc][1] * (x - f[loc-1][0]) / h[loc-1] - f[loc-1][1] * (x - f[loc][0]) / h[loc-1]
+    S += M[loc] / 6 * (((x - f[loc-1][0]) ** 3) / h[loc-1] - (h[loc-1] * (x - f[loc-1][0])))
+    S -= M[loc] / 6 * (((x - f[loc][0]) ** 3) / h[loc-1] - (h[loc-1] * (x - f[loc][0])))
+
+    print("\nx0 between f(x" + str(loc - 1) + ") = " + str(f[loc - 1][0]) + " and f(x" + str(loc) + ") = " + str(
+        f[loc][0]) + " so:")
+    print("s" + str(loc - 1) + "(" + str(x0) + ") = " + str(float(S.subs(x, x0))))
 
 
-from Iterative_methods_matrix.Jacobi import jacobi_iterative
-from sympy import *
-
-x = Symbol('x')
 
 
 def natural_cubic_spline(f, x0):
@@ -122,12 +148,18 @@ def natural_cubic_spline(f, x0):
     M = (jacobi_iterative(mat, d, result))
     print("\nvector M: " + str(list(map(float, M))))
 
-    # find S:
+    """# find S:
     for loc in range(1, len(f)):
         s = (((f[loc][0] - x) ** 3) * M[loc - 1] + ((x - f[loc - 1][0]) ** 3) * M[loc]) / (6 * h[loc - 1])
         s += (((f[loc][0] - x) * f[loc - 1][1]) + ((x - f[loc - 1][0]) * f[loc][1])) / h[loc - 1]
         s -= (((f[loc][0] - x) * M[loc - 1] + (x - f[loc - 1][0]) * M[loc]) * h[loc - 1]) / 6
-        print("s" + str(loc - 1) + "(x) = " + str(s))
+        print("s" + str(loc - 1) + "(x) = " + str(s))"""
+    S = 0
+    for i in range(len(f) - 1):
+        S = f[i + 1][1] * (x - f[i][0]) / h[i] - f[i][1] * (x - f[i + 1][0]) / h[i]
+        S += M[i + 1] / 6 * (((x - f[i][0]) ** 3) / h[i] - (h[i] * (x - f[i][0])))
+        S -= M[i] / 6 * (((x - f[i + 1][0]) ** 3) / h[i] - (h[i] * (x - f[i + 1][0])))
+        print("s" + str(i) + "(x) = " + str(S))
 
     # find the location of x0:
     loc = 0
@@ -139,22 +171,27 @@ def natural_cubic_spline(f, x0):
     if loc == 0:
         print("no range found for x0")
         return
-
-    s = (((f[loc][0] - x) ** 3) * M[loc - 1] + ((x - f[loc - 1][0]) ** 3) * M[loc]) / (6 * h[loc - 1])
+    """s = (((f[loc][0] - x) ** 3) * M[loc - 1] + ((x - f[loc - 1][0]) ** 3) * M[loc]) / (6 * h[loc - 1])
     s += (((f[loc][0] - x) * f[loc - 1][1]) + ((x - f[loc - 1][0]) * f[loc][1])) / h[loc - 1]
-    s -= (((f[loc][0] - x) * M[loc - 1] + (x - f[loc - 1][0]) * M[loc]) * h[loc - 1]) / 6
+    s -= (((f[loc][0] - x) * M[loc - 1] + (x - f[loc - 1][0]) * M[loc]) * h[loc - 1]) / 6"""
+
+    S = 0
+    S = f[loc][1] * (x - f[loc-1][0]) / h[loc-1] - f[loc-1][1] * (x - f[loc][0]) / h[loc-1]
+    S += M[loc] / 6 * (((x - f[loc-1][0]) ** 3) / h[loc-1] - (h[loc-1] * (x - f[loc-1][0])))
+    S -= M[loc] / 6 * (((x - f[loc][0]) ** 3) / h[loc-1] - (h[loc-1] * (x - f[loc][0])))
 
     print("\nx0 between f(x" + str(loc - 1) + ") = " + str(f[loc - 1][0]) + " and f(x" + str(loc) + ") = " + str(
         f[loc][0]) + " so:")
-    print("s" + str(loc - 1) + "(" + str(x0) + ") = " + str(float(s.subs(x, x0))))
+    print("s" + str(loc - 1) + "(" + str(x0) + ") = " + str(float(S.subs(x, x0))))
+
 
 
 
 if __name__ == '__main__':
-    """f = [(1, 1), (2, 2), (3, 1), (4, 1.5), (5, 1)]
-    x0 = 4.5"""
-    f = [(0,0), (m.pi/6, 0.5), (m.pi/4, 0.7072), (m.pi/2, 1)]
-    x0 = m.pi/3
+    f = [(1, 1), (2, 2), (3, 1), (4, 1.5), (5, 1)]
+    x0 = 4.5
+    """f = [(0,0), (m.pi/6, 0.5), (m.pi/4, 0.7072), (m.pi/2, 1)]
+    x0 = m.pi/3"""
     y_0_deri = 1
     y_n_deri = 0
 
