@@ -5,9 +5,9 @@ Git: lihiSabag https://github.com/lihiSabag/Numerical-Analysis-2023.git
 Name:
 """
 import numpy as np
-from inverse_matrix.inverse_matrix import inverse
+from inverse_matrix import inverse
 from colors import bcolors
-from inverse_matrix.matrix_utility import print_matrix
+from matrix_utility import print_matrix
 """
 על מנת לחשב את טיב ההצגה יש לחשב את:
  * הנורמה של מטריצה A
@@ -15,7 +15,7 @@ from inverse_matrix.matrix_utility import print_matrix
  * נורמה של מטריצה הפיכה
  ונחזיר את הכפל בין המטריצות
 """
-#find norm of matrix A- מציאת נורמה למטריצה
+# find norm of matrix A
 def norm(mat):
     size = len(mat)  # size of matrix
     max_row = 0  # In max_row will be the max sum between rows- יכיל את סכום השורה הגבוה ביותר
@@ -64,4 +64,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
